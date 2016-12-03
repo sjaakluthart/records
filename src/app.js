@@ -1,11 +1,25 @@
-import React from 'react';
+import React, { Component } from 'react';
+import request from 'superagent';
 
-function App() {
-  return (
-    <main>
-      <h1>Records</h1>
-    </main>
-  );
+class App extends Component {
+  componentDidMount() {
+    request.get('/api/test').end((err, res) => {
+      if (err) {
+        console.log(err);
+      }
+
+      console.log(res);
+    });
+  }
+
+  render() {
+    return (
+      <main>
+        <h1>Records</h1>
+      </main>
+    );
+  }
 }
+
 
 export default App;
