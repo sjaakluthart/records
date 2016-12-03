@@ -1,7 +1,6 @@
 import React from 'react';
-import records from '../records.json';
 
-function RecordList() {
+function RecordList({ records }) {
   return (
     <section className="record-list">
       {records.map((record, i) => (
@@ -9,12 +8,21 @@ function RecordList() {
           <img src={record.cover} alt={record.title} />
           <figcaption>
             <p>{record.artist}</p>
-            <p>{record.title}</p>
+            <p>{record.title} - {record.year}</p>
           </figcaption>
         </figure>
       ))}
     </section>
   );
 }
+
+RecordList.propTypes = {
+  records: React.PropTypes.arrayOf(React.PropTypes.shape({
+    title: React.PropTypes.string.isRequired,
+    artist: React.PropTypes.string.isRequired,
+    year: React.PropTypes.string.isRequired,
+    cover: React.PropTypes.string.isRequired
+  })).isRequired
+};
 
 export default RecordList;

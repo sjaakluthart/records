@@ -3,21 +3,37 @@ import request from 'superagent';
 import RecordList from './record-list';
 
 class Home extends Component {
+  constructor() {
+    super();
+
+    this.state = {
+      records: []
+    };
+  }
+
   componentDidMount() {
-    request.get('/api/test').end((err, res) => {
+    request.get('/api/records/all').end((err, res) => {
       if (err) {
         console.log(err);
       }
 
-      console.log(res);
+      if (res.status === 200 && res.text) {
+        const records = JSON.parse(res.text);
+
+        this.setState({
+          records
+        });
+      }
     });
   }
 
   render() {
+    const { records } = this.state;
+
     return (
       <section className="home">
         <h1>Records</h1>
-        <RecordList />
+        {records.length > 0 ? <RecordList records={records} /> : <p>Loading...</p>}
       </section>
     );
   }
