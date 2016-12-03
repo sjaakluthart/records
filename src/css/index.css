@@ -1,5 +1,24 @@
+html {
+
+}
+
 body {
+  width: 100vw;
+  height: 100vh;
   margin: 0;
   padding: 0;
   font-family: 'Lato', sans-serif;
+  color: #FFF;
+  background-image: url('../assets/images/black_twill.png');
+}
+
+main {
+  box-sizing: border-box;
+  padding: 1rem;
+}
+
+.home > h1 {
+  font-size: 2rem;
+  text-transform: uppercase;
+  text-align: center;
 }

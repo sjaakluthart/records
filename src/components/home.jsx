@@ -14,9 +14,9 @@ class Home extends Component {
 
   render() {
     return (
-      <main>
+      <section className="home">
         <h1>Records</h1>
-      </main>
+      </section>
     );
   }
 }
