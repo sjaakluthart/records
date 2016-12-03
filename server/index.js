@@ -7,6 +7,7 @@ const path = require('path');
 const winston = require('winston');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
+const bcrypt = require('bcrypt');
 const Record = require('./record');
 const User = require('./user');
 const settings = require('../settings.json');
@@ -15,6 +16,8 @@ const records = require('../records.json');
 const production = process.env.NODE_ENV === 'production';
 const port = production ? process.env.PORT : 3001;
 const host = production ? process.env.HOST : 'localhost';
+
+const saltRounds = 10;
 
 Record.find({}, (err, docs) => {
   if (docs.length === 0) {
@@ -30,8 +33,13 @@ User.find({}, (err, docs) => {
   if (docs.length === 0) {
     winston.log('info', 'No users found, inserting from settings.json');
 
-    settings.users.forEach((record) => {
-      User.create(record);
+    settings.users.forEach((user) => {
+      bcrypt.hash(user.password, saltRounds, (hashErr, hash) => {
+        User.create({
+          username: user.username,
+          password: hash
+        });
+      });
     });
   }
 });
@@ -64,9 +72,14 @@ passport.use(new LocalStrategy((username, password, done) => {
     if (!user) {
       return done(null, false, { message: 'Incorrect username.' });
     }
-    if (user.password !== password) {
-      return done(null, false, { message: 'Incorrect password.' });
-    }
+
+    bcrypt.compare(password, user.password, (compareErr, success) => {
+      if (!success) {
+        return done(null, false, { message: 'Incorrect password.' });
+      }
+
+      return null;
+    });
     return done(null, user);
   });
 }));
