@@ -1,8 +1,13 @@
+require('dotenv').config({ silent: true });
 const express = require('express');
 const path = require('path');
 const winston = require('winston');
 const Record = require('./record');
 const records = require('../records.json');
+
+const production = process.env.NODE_ENV === 'production';
+const port = production ? process.env.PORT : 3001;
+const host = production ? process.env.HOST : 'localhost';
 
 Record.find({}, (err, docs) => {
   if (docs.length === 0) {
@@ -15,8 +20,6 @@ Record.find({}, (err, docs) => {
 });
 
 const app = express();
-
-app.set('port', (process.env.PORT || 3001));
 
 app.get('/api/records/all', (req, res) => {
   Record.find({}, (err, docs) => {
@@ -36,6 +39,6 @@ app.get('*', (req, res) => {
   res.sendFile(path.resolve(__dirname, '..', 'build', 'index.html'));
 });
 
-app.listen(app.get('port'), () => {
-  winston.log('info', `Server running at ${app.get('port')}`);
+app.listen(port, host, () => {
+  winston.log('info', `Server running at http://${host}:${port}`);
 });
