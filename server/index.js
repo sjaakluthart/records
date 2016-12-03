@@ -1,8 +1,15 @@
 require('dotenv').config({ silent: true });
 const express = require('express');
+const bodyParser = require('body-parser');
+const session = require('express-session');
+const uuid = require('uuid');
 const path = require('path');
 const winston = require('winston');
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
 const Record = require('./record');
+const User = require('./user');
+const settings = require('../settings.json');
 const records = require('../records.json');
 
 const production = process.env.NODE_ENV === 'production';
@@ -19,7 +26,50 @@ Record.find({}, (err, docs) => {
   }
 });
 
+User.find({}, (err, docs) => {
+  if (docs.length === 0) {
+    winston.log('info', 'No users found, inserting from settings.json');
+
+    settings.users.forEach((record) => {
+      User.create(record);
+    });
+  }
+});
+
 const app = express();
+
+app.use(session({
+  genid() {
+    return uuid.v1();
+  },
+  resave: false,
+  saveUninitialized: true,
+  secret: settings.secret
+}));
+app.use(bodyParser.json());
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.serializeUser((user, done) => {
+  done(null, user);
+});
+
+passport.deserializeUser((user, done) => {
+  done(null, user);
+});
+
+passport.use(new LocalStrategy((username, password, done) => {
+  User.findOne({ username }, (err, user) => {
+    if (err) { return done(err); }
+    if (!user) {
+      return done(null, false, { message: 'Incorrect username.' });
+    }
+    if (user.password !== password) {
+      return done(null, false, { message: 'Incorrect password.' });
+    }
+    return done(null, user);
+  });
+}));
 
 app.get('/api/records/all', (req, res) => {
   Record.find({}, (err, docs) => {
@@ -29,6 +79,12 @@ app.get('/api/records/all', (req, res) => {
 
     res.send(docs);
   });
+});
+
+app.post('/api/login', passport.authenticate('local'), (req, res) => {
+  winston.log('info', `Succesfully authenticated user ${req.body.username}`);
+
+  res.send('authenticated');
 });
 
 // Serve static assets
