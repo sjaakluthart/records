@@ -6,6 +6,7 @@ import Home from './components/home';
 import './css/reset.css';
 import './css/fonts.css';
 import './css/index.css';
+import './css/home.css';
 
 ReactDOM.render(
   <Router history={browserHistory}>

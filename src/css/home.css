@@ -1,0 +1,32 @@
+.home .record-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-around;
+  align-items: space-around;
+}
+
+.record-list .record {
+  width: calc(50% - 1rem);
+  max-width: 20rem;
+  margin: .5rem;
+  position: relative;
+}
+
+.record-list .record figcaption {
+  width: 100%;
+  box-sizing: border-box;
+  position: absolute;
+  bottom: 0;
+  padding: 1rem;
+  font-size: 1.4rem;
+  background: rgba(0, 0, 0, .35);
+}
+
+.record-list .record figcaption p:first-child {
+  margin-bottom: .5rem;
+}
+
+.record img {
+  width: 100%;
+}
