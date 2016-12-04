@@ -1,9 +1,12 @@
 import React from 'react';
+import _ from 'underscore';
 
 function RecordList({ records }) {
+  const sortedRecords = _.sortBy(records, record => record.artist);
+
   return (
     <section className="record-list">
-      {records.map((record, i) => (
+      {sortedRecords.map((record, i) => (
         <figure className="record" key={i}>
           <img src={record.cover} alt={record.title} />
           <figcaption>
