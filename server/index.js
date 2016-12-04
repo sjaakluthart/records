@@ -8,6 +8,7 @@ const winston = require('winston');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const bcrypt = require('bcrypt');
+const request = require('superagent');
 const Record = require('./record');
 const User = require('./user');
 const settings = require('../settings.json');
@@ -19,15 +20,15 @@ const host = production ? process.env.HOST : 'localhost';
 
 const saltRounds = 10;
 
-Record.find({}, (err, docs) => {
-  if (docs.length === 0) {
-    winston.log('info', 'No records found, inserting from records.json');
-
-    records.forEach((record) => {
-      Record.create(record);
-    });
-  }
-});
+// Record.find({}, (err, docs) => {
+//   if (docs.length === 0) {
+//     winston.log('info', 'No records found, inserting from records.json');
+//
+//     records.forEach((record) => {
+//       Record.create(record);
+//     });
+//   }
+// });
 
 User.find({}, (err, docs) => {
   if (docs.length === 0) {
@@ -98,6 +99,46 @@ app.post('/api/login', passport.authenticate('local'), (req, res) => {
   winston.log('info', `Succesfully authenticated user ${req.body.username}`);
 
   res.send('authenticated');
+});
+
+app.get('/api/authenticated', (req, res) => {
+  const authenticated = Boolean(req.session.passport);
+
+  if (!authenticated) {
+    return res.status(400).send('Bad request');
+  }
+
+  return res.send('authenticated');
+});
+
+app.post('/api/records', (req, res) => {
+  const authenticated = Boolean(req.session.passport);
+
+  if (!authenticated) {
+    return res.status(400).send('Bad request');
+  }
+
+  const url = `http://ws.audioscrobbler.com/2.0/?method=album.getinfo&api_key=
+  ${settings.lastFmKey}&artist=${req.body.artist}&album=${req.body.title}&format=json`;
+
+  request.get(url)
+  .end((err, result) => {
+    if (result && result.body && result.body.album && result.body.album.image) {
+      const record = {
+        title: req.body.title,
+        artist: req.body.artist,
+        cover: result.body.album.image[2]['#text']
+      };
+
+      Record.create(record);
+
+      return res.status(201).send(`Added ${req.body.title} from ${req.body.artist}`);
+    }
+
+    return res.status(400).send('Bad request');
+  });
+
+  return false;
 });
 
 // Serve static assets

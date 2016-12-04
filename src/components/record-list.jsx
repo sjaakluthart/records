@@ -8,7 +8,7 @@ function RecordList({ records }) {
           <img src={record.cover} alt={record.title} />
           <figcaption>
             <p>{record.artist}</p>
-            <p>{record.title} - {record.year}</p>
+            <p>{record.title}</p>
           </figcaption>
         </figure>
       ))}
@@ -20,7 +20,6 @@ RecordList.propTypes = {
   records: React.PropTypes.arrayOf(React.PropTypes.shape({
     title: React.PropTypes.string.isRequired,
     artist: React.PropTypes.string.isRequired,
-    year: React.PropTypes.string.isRequired,
     cover: React.PropTypes.string.isRequired
   })).isRequired
 };

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import request from 'superagent';
+import { browserHistory } from 'react-router';
 
 class Login extends Component {
   constructor() {
@@ -33,7 +34,9 @@ class Login extends Component {
     request.post('/api/login/')
     .send(this.state)
     .end((err, res) => {
-      console.log(err, res);
+      if (res && res.status === 200) {
+        browserHistory.push('/add-record');
+      }
     });
   }
 

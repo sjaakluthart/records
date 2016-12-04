@@ -17,8 +17,7 @@ main {
   padding: 2rem;
 }
 
-.home > h1,
-.login > h1 {
+h1 {
   font-size: 2rem;
   text-transform: uppercase;
   text-align: center;
