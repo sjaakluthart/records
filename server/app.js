@@ -105,12 +105,16 @@ app.post('/api/records', (req, res) => {
         cover: result.body.album.image[3]['#text']
       };
 
-      Record.create(record);
+      Record.findOne({ title: req.body.title, artist: req.body.artist }, (errror, doc) => {
+        if (doc) {
+          return res.status(500).send('Record already exists.');
+        }
 
-      return res.status(201).send(`Added ${req.body.title} from ${req.body.artist}`);
+        Record.create(record);
+
+        return res.status(201).send(`Added ${req.body.title} from ${req.body.artist}`);
+      });
     }
-
-    return res.status(400).send('Bad request');
   });
 
   return false;
