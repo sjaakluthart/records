@@ -9,6 +9,7 @@ import './css/reset.css';
 import './css/fonts.css';
 import './css/index.css';
 import './css/home.css';
+import './css/add-record.css';
 
 ReactDOM.render(
   <Router history={browserHistory}>

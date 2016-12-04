@@ -20,15 +20,15 @@ const host = production ? process.env.HOST : 'localhost';
 
 const saltRounds = 10;
 
-// Record.find({}, (err, docs) => {
-//   if (docs.length === 0) {
-//     winston.log('info', 'No records found, inserting from records.json');
-//
-//     records.forEach((record) => {
-//       Record.create(record);
-//     });
-//   }
-// });
+Record.find({}, (err, docs) => {
+  if (docs.length === 0) {
+    winston.log('info', 'No records found, inserting from records.json');
+
+    records.forEach((record) => {
+      Record.create(record);
+    });
+  }
+});
 
 User.find({}, (err, docs) => {
   if (docs.length === 0) {
@@ -95,6 +95,14 @@ app.get('/api/records/all', (req, res) => {
   });
 });
 
+app.get('/api/artist/:name', (req, res) => {
+  const url = `http://ws.audioscrobbler.com/2.0/?method=artist.gettopalbums&artist=${req.params.name}&api_key=${settings.lastFmKey}&format=json`;
+
+  request.get(url).end((err, result) => {
+    res.send(result.body);
+  });
+});
+
 app.post('/api/login', passport.authenticate('local'), (req, res) => {
   winston.log('info', `Succesfully authenticated user ${req.body.username}`);
 
@@ -127,7 +135,7 @@ app.post('/api/records', (req, res) => {
       const record = {
         title: req.body.title,
         artist: req.body.artist,
-        cover: result.body.album.image[2]['#text']
+        cover: result.body.album.image[3]['#text']
       };
 
       Record.create(record);

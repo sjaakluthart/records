@@ -1,0 +1,56 @@
+.add-record .record {
+  display: inline-block;
+  width: calc(50% - 1rem);
+  max-width: 20rem;
+  margin: .5rem;
+  position: relative;
+  cursor: pointer;
+}
+
+.add-record input {
+  appearance: none;
+  border: 0;
+  font-size: 1.5rem;
+  padding: .5rem;
+}
+
+.add-record form {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.add-record input:focus {
+  border: 0;
+  outline: 0;
+}
+
+.add-record form svg {
+  position: relative;
+  top: 6px;
+  left: 6px;
+  cursor: pointer;
+}
+
+.add-record section {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-around;
+  align-items: space-around;
+}
+
+.record figcaption {
+  width: 100%;
+  box-sizing: border-box;
+  position: absolute;
+  bottom: 0;
+  padding: 1rem;
+  font-size: 1.4rem;
+  background: rgba(0, 0, 0, .35);
+}
+
+.record svg {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+}
