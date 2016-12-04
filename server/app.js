@@ -105,7 +105,7 @@ app.post('/api/records', (req, res) => {
         cover: result.body.album.image[3]['#text']
       };
 
-      Record.findOne({ title: req.body.title, artist: req.body.artist }, (errror, doc) => {
+      Record.findOne({ title: req.body.title, artist: req.body.artist }, (error, doc) => {
         if (doc) {
           return res.status(500).send('Record already exists.');
         }
