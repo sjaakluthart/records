@@ -96,7 +96,7 @@ app.get('/api/records/all', (req, res) => {
 });
 
 app.get('/api/artist/:name', (req, res) => {
-  const url = `http://ws.audioscrobbler.com/2.0/?method=artist.gettopalbums&artist=${req.params.name}&api_key=${settings.lastFmKey}&format=json`;
+  const url = `http://ws.audioscrobbler.com/2.0/?method=artist.gettopalbums&artist=${req.params.name}&api_key=${settings.lastFmKey}&autocorrect[1]&format=json`;
 
   request.get(url).end((err, result) => {
     res.send(result.body);

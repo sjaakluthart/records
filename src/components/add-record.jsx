@@ -6,6 +6,31 @@ import IconAdd from './icon-add';
 import IconSearch from './icon-search';
 
 class AddRecord extends Component {
+  static addRecord(title, artist) {
+    const record = {
+      title,
+      artist
+    };
+
+    request.post('/api/records')
+    .send(record)
+    .end((err, res) => {
+      if (res && res.status === 400) {
+        browserHistory.replace('/login');
+
+        return false;
+      }
+
+      if (res && res.status === 201) {
+        browserHistory.push('/');
+
+        return false;
+      }
+
+      return false;
+    });
+  }
+
   constructor() {
     super();
 
@@ -17,7 +42,6 @@ class AddRecord extends Component {
 
     this.changeTitle = this.changeTitle.bind(this);
     this.changeArtist = this.changeArtist.bind(this);
-    this.addRecord = this.addRecord.bind(this);
     this.searchRecords = this.searchRecords.bind(this);
   }
 
@@ -46,31 +70,6 @@ class AddRecord extends Component {
     });
   }
 
-  addRecord(title) {
-    const record = {
-      title,
-      artist: this.state.artist
-    };
-
-    request.post('/api/records')
-    .send(record)
-    .end((err, res) => {
-      if (res && res.status === 400) {
-        browserHistory.replace('/login');
-
-        return false;
-      }
-
-      if (res && res.status === 201) {
-        browserHistory.push('/');
-
-        return false;
-      }
-
-      return false;
-    });
-  }
-
   searchRecords(event) {
     event.preventDefault();
     const { artist } = this.state;
@@ -92,7 +91,7 @@ class AddRecord extends Component {
 
         const filteredAlbums =
         _.chain(albums)
-         .filter(album => album.artist === artist && album.image !== '')
+         .filter(album => album.image !== '')
          .uniq(album => album.name)
          .value();
 
@@ -117,7 +116,11 @@ class AddRecord extends Component {
           {
             albums.length > 0
             ? albums.map((album, i) => (
-              <figure className="record" key={i} onClick={() => this.addRecord(album.name)}>
+              <figure
+                className="record"
+                key={i}
+                onClick={() => this.constructor.addRecord(album.name, album.artist)}
+              >
                 <img src={album.image} alt={album.name} />
                 <figcaption>
                   <p>{album.artist}</p>
